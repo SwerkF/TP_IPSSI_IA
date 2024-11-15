@@ -6,102 +6,125 @@ import numpy as np
 import os
 import pickle
 import joblib
+import torch
+import torch.nn as nn
 
-# Fonction pour charger un modèle TensorFlow ou un modèle MLP (fichier .h5 ou .pkl)
+# Define your PyTorch model architecture
+class CNNModel(nn.Module):
+    def __init__(self):
+        super(CNNModel, self).__init__()
+        self.features = nn.Sequential(
+            nn.Conv2d(3, 32, kernel_size=3),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            nn.Conv2d(32, 64, kernel_size=3),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            nn.Conv2d(64, 128, kernel_size=3),
+            nn.ReLU(),
+            nn.MaxPool2d(2)
+        )
+        
+        # Passe à vide pour calculer la taille d'entrée pour la couche dense
+        with torch.no_grad():
+            dummy_input = torch.zeros(1, 3, 224, 224)
+            output_size = self.features(dummy_input).view(-1).shape[0]
+        
+        self.classifier = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(output_size, 128),
+            nn.ReLU(),
+            nn.Linear(128, 1),
+            nn.Sigmoid()
+        )
+
+    def forward(self, x):
+        x = self.features(x)
+        x = self.classifier(x)
+        return x
+
+# Function to load a TensorFlow or MLP model (.keras or .pkl file)
 @st.cache_resource
 def load_selected_model(model_path):
     try:
-        if model_path.endswith('.h5'):
-            # Charger un modèle TensorFlow
+        if model_path.endswith('.keras'):
+            # Load a TensorFlow model
             model = models.load_model(model_path)
             return model, "tensorflow"
         elif model_path.endswith('.pkl'):
-            # Charger un modèle scikit-learn (pkl)
+            # Load a scikit-learn model (pkl)
             with open(model_path, 'rb') as file:
                 try:
                     model = pickle.load(file)
                 except Exception:
-                    model = joblib.load(model_path)  # Charger avec joblib si pickle échoue
+                    model = joblib.load(model_path)  # Load with joblib if pickle fails
             return model, "mlp"
+        elif model_path.endswith('.pth'):
+            # Load a PyTorch model
+            model = CNNModel()
+            model.load_state_dict(torch.load(model_path))
+            model.eval()  # Set the model to evaluation mode
+            return model, "pytorch"
         else:
-            st.error("Format de modèle non pris en charge.")
+            st.error("Unsupported model format.")
             st.stop()
     except Exception as e:
-        st.error(f"Erreur lors du chargement du modèle : {e}")
+        st.error(f"Error loading model: {e}")
         st.stop()
 
-# Fonction pour prédire avec le modèle sélectionné
+# Function to predict with the selected model
 def predict_image(file, model, model_type):
     if model_type == "tensorflow":
-        # Chargement et redimensionnement pour les CNN
+        # Load and resize for CNNs
         img = image.load_img(file, target_size=(224, 224))
         img_array = image.img_to_array(img)
-        img_array = np.expand_dims(img_array, axis=0)  # Ajouter une dimension batch
+        img_array = np.expand_dims(img_array, axis=0)  # Add a batch dimension
         prediction = model.predict(img_array)
         return "Malignant" if prediction[0][0] > 0.5 else "Benign"
     elif model_type == "mlp":
-        # Chargement et redimensionnement pour les MLP
-        img = image.load_img(file, target_size=(50, 50))  # Taille adaptée au MLP
+        # Load and resize for MLPs
+        img = image.load_img(file, target_size=(50, 50))  # Size suitable for MLP
         img_array = image.img_to_array(img)
-        img_flat = img_array.flatten().reshape(1, -1)  # Aplatir pour scikit-learn
+        img_flat = img_array.flatten().reshape(1, -1)  # Flatten for scikit-learn
         prediction = model.predict(img_flat)
         return "Malignant" if prediction[0] == 1 else "Benign"
+    elif model_type == "pytorch":
+        # Load and resize for PyTorch CNNs
+        img = image.load_img(file, target_size=(224, 224))
+        img_array = image.img_to_array(img)
+        img_tensor = torch.Tensor(img_array).permute(2, 0, 1).unsqueeze(0)
+        with torch.no_grad():
+            prediction = model(img_tensor)
+        return "Malignant" if prediction.item() > 0.5 else "Benign"
 
+# Streamlit interface
+st.title("Image Analysis: Benign or Malignant")
+st.write("Upload an image and select a model to analyze the image.")
 
-def model_page():
-    # Interface Streamlit Models
-    st.title("Analyse d'images : Bénain ou Malin")
-    st.write("Téléchargez une image et sélectionnez un modèle pour analyser l'image.")
+# List of available models in the `data/saved_models` folder
+model_dir = './data/saved_models'
+models_available = [f for f in os.listdir(model_dir) if f.endswith('.keras') or f.endswith('.pkl') or f.endswith('.pth')]
 
-    # Liste des modèles disponibles dans le dossier `data/saved_models`
-    model_dir = './data/saved_models'
-    models_available = [f for f in os.listdir(model_dir) if f.endswith('.h5') or f.endswith('.pkl')]
+if not models_available:
+    st.error("No models available in the 'data/saved_models' folder. Please add .keras or .pkl files.")
+    st.stop()
 
-    if not models_available:
-        st.error("Aucun modèle disponible dans le dossier 'data/saved_models'. Veuillez ajouter des fichiers .h5 ou .pkl.")
-        st.stop()
+# Model selection
+selected_model = st.selectbox("Select a model:", models_available)
+model_path = os.path.join(model_dir, selected_model)
 
-    # Sélection du modèle
-    selected_model = st.selectbox("Sélectionnez un modèle :", models_available)
-    model_path = os.path.join(model_dir, selected_model)
+# Load the selected model
+model, model_type = load_selected_model(model_path)
+st.success(f"Model loaded: {selected_model} (Type: {model_type})")
 
-    # Charger le modèle sélectionné
-    model, model_type = load_selected_model(model_path)
-    st.success(f"Modèle chargé : {selected_model} (Type : {model_type})")
+# Image upload
+uploaded_files = st.file_uploader("Choose an image", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
 
-    # Upload d'une image
-    uploaded_files = st.file_uploader("Choisir une image", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
+if uploaded_files:
+    for file in uploaded_files:
+        st.write(f"Analyzing image: {file.name}")
+        st.image(file, caption="Image to analyze", use_column_width=True)
 
-    if uploaded_files:
-        for file in uploaded_files:
-            st.write(f"Analyse de l'image : {file.name}")
-            st.image(file, caption="Image à analyser", use_column_width=True)
-
-            # Prédiction avec le modèle sélectionné
-            prediction = predict_image(file, model, model_type)
-            st.success(f"Prédiction : {prediction}")
-
-def about_page():
-    st.title("À propos")
-    st.write("Cette application a été développée dans le cadre du TP IPSSI IA.")
-    st.write("Elle permet d'analyser des images médicales pour détecter des tumeurs bénignes ou malignes.")
-    st.write("Elle utilise des modèles de Machine Learning (MLP) et de Deep Learning (CNN) pour effectuer les prédictions.")
-    st.write("Développée par : [Prénom Nom](https://www.linkedin.com/in/username/)")
-
-curr_page = "Models"
-
-def change_page(page):
-    if page == "Models":
-        model_page()
-    elif page == "About":
-        about_page()
-
-st.sidebar.title("Navigation")
-st.sidebar.button("Modèles", on_click=lambda: change_page("Models"))
-st.sidebar.button("À propos", on_click=lambda: change_page("About"))
-
-
-
-
-
-
+        # Prediction with the selected model
+        prediction = predict_image(file, model, model_type)
+        st.success(f"Prediction: {prediction}")
