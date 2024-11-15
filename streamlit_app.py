@@ -102,11 +102,11 @@ st.title("Image Analysis: Benign or Malignant")
 st.write("Upload an image and select a model to analyze the image.")
 
 # List of available models in the `data/saved_models` folder
-model_dir = './data/saved_models'
+model_dir = './saved_models'
 models_available = [f for f in os.listdir(model_dir) if f.endswith('.keras') or f.endswith('.pkl') or f.endswith('.pth')]
 
 if not models_available:
-    st.error("No models available in the 'data/saved_models' folder. Please add .keras or .pkl files.")
+    st.error("No models available. Please save a model first.")
     st.stop()
 
 # Model selection
