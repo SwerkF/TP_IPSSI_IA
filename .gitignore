@@ -1,2 +1,12 @@
 ./data/images
 /data/images
+venv
+
+# Ignorer les dossiers __pycache__
+__pycache__/
+
+# Ignorer les fichiers temporaires et de configuration
+.idea/
+*.pyc
+*.pyo
+*.pyd
