@@ -5,7 +5,7 @@ import pandas as pd
 from sklearn.metrics import roc_curve, auc
 
 
-def preprocess_data(data, n_rows=None, remove_other_deseas = False):
+def preprocess_data(data, n_rows=None, remove_other_diseases = False):
     """
     Preprocesses the data by keeping a certain number of rows (or all) and dropping specific columns.
 
@@ -25,12 +25,12 @@ def preprocess_data(data, n_rows=None, remove_other_deseas = False):
                        'ChestScan', 'FluVaxLast12', 'PneumoVaxEver',
                        'TetanusLast10Tdap', 'HighRiskLastYear', 'CovidPos', 'GeneralHealth']
 
-    colums_deases = ['HadHeartAttack', 'HadAngina', 'HadStroke', 'HadAsthma', 'HadCOPD', 'HadDepressiveDisorder', 'HadKidneyDisease',
-     'HadArthritis', 'HadDiabetes', 'DeafOrHardOfHearing', 'BlindOrVisionDifficulty', 'DifficultyConcentrating', 'DifficultyWalking', 'DifficultyBathing', 'DifficultyErrands']
+    colums_diseases = ['HadHeartAttack', 'HadAngina', 'HadStroke', 'HadAsthma', 'HadCOPD', 'HadDepressiveDisorder', 'HadKidneyDisease',
+     'HadArthritis', 'HadDiabetes', 'DeafOrHardOfHearing', 'BlindOrVisionDifficulty', 'DifficultyConcentrating', 'DifficultyWalking', 'DifficultyDressingBathing', 'DifficultyErrands']
 
     preprocessed_data = data.drop(columns=columns_to_drop)
-    if remove_other_deseas:
-        preprocessed_data = preprocessed_data.drop(columns=colums_deases)
+    if remove_other_diseases:
+        preprocessed_data = preprocessed_data.drop(columns=colums_diseases)
 
     return preprocessed_data, initial_data
 

@@ -10,3 +10,6 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+# Ignorer les fichiers MAC
+.DS_Store
