@@ -10,6 +10,8 @@ from models.Sequential import create_sequential_model
 from utils.data_preprocessing import load_images_from_directory, create_data_generator
 from utils.metrics import evaluate_model
 import joblib
+import matplotlib.pyplot as plt
+import numpy as np
 
 # Chargement des données
 train_data, train_labels = load_images_from_directory('data/images/train')
@@ -37,10 +39,13 @@ early_stopping = EarlyStopping(monitor='val_loss', patience=2, restore_best_weig
 
 def train_and_evaluate_model(model, model_name):
     start_time = time.time()
-    model.fit(datagen.flow(train_data, train_labels, batch_size=32),
-              validation_data=(test_data, test_labels),
-              epochs=10, callbacks=[early_stopping])
+    history = model.fit(datagen.flow(train_data, train_labels, batch_size=32),
+                        validation_data=(test_data, test_labels),
+                        epochs=10, callbacks=[early_stopping])
     training_time = time.time() - start_time
+
+    # Sauvegarder les courbes d'apprentissage
+    save_training_curves(history, model_name)
 
     start_time = time.time()
     accuracy, auc = evaluate_model(model, test_data, test_labels)
@@ -53,6 +58,45 @@ def train_and_evaluate_model(model, model_name):
         'training_time': training_time,
         'evaluation_time': evaluation_time
     }
+
+def save_training_curves(history, model_name):
+    # Extraire les données de l'historique d'entraînement
+    epochs = range(1, len(history.history['loss']) + 1)
+    train_loss = history.history['loss']
+    val_loss = history.history.get('val_loss')
+    train_acc = history.history.get('accuracy')
+    val_acc = history.history.get('val_accuracy')
+
+    # Créer un répertoire pour sauvegarder les courbes
+    curves_dir = './training_curves'
+    if not os.path.exists(curves_dir):
+        os.makedirs(curves_dir)
+
+    # Plot de la courbe de loss
+    plt.figure(figsize=(10, 5))
+    plt.plot(epochs, train_loss, label='Train Loss')
+    if val_loss:
+        plt.plot(epochs, val_loss, label='Validation Loss')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.title(f'Courbe de Loss - {model_name}')
+    plt.legend()
+    plt.grid(True)
+    plt.savefig(os.path.join(curves_dir, f'{model_name}_loss_curve.png'))
+    plt.close()
+
+    # Plot de la courbe d'accuracy
+    if train_acc and val_acc:
+        plt.figure(figsize=(10, 5))
+        plt.plot(epochs, train_acc, label='Train Accuracy')
+        plt.plot(epochs, val_acc, label='Validation Accuracy')
+        plt.xlabel('Epochs')
+        plt.ylabel('Accuracy')
+        plt.title(f"Courbe d'Accuracy - {model_name}")
+        plt.legend()
+        plt.grid(True)
+        plt.savefig(os.path.join(curves_dir, f'{model_name}_accuracy_curve.png'))
+        plt.close()
 
 # Liste pour stocker les résultats
 results = []
