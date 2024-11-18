@@ -287,6 +287,146 @@ elif page == "Analyse Exploratoire des Données":
     st.subheader("Tableau Récapitulatif des Résultats")
     st.image("data/images/decision_tree_summary_table.png",
              caption="Tableau des Profondeurs, Précisions et Taille des Arbres")
+    
+    st.title("📊 Analyse et Visualisation avec KNN, Régression Logistique et K-Means")
+
+    # Titre principal
+    st.title("Analyse de Modèles : KNN, K-Means et Régression Logistique")
+
+    # Section 1 : Modèle KNN
+    st.header("Modèle K-Nearest Neighbors (KNN)")
+
+    # Résultats du modèle
+    st.subheader("Résultats du Modèle KNN")
+    st.image("data/images/results_knn.png", caption="Résultats du modèle KNN")
+
+    # Méthode du coude
+    st.subheader("Méthode du Coude")
+    st.image("data/images/elbow_knn.png", caption="Méthode du coude")
+    st.markdown("""
+    La méthode du coude a été utilisée pour choisir une valeur optimale pour k. 
+    Le taux d'erreur diminue rapidement jusqu'à une stabilisation autour de **k=10**, suggérant un équilibre entre complexité et performance.
+    """)
+
+    # Matrice de confusion
+    st.subheader("Matrice de Confusion")
+    st.markdown("""
+    |                | Prédit : Non | Prédit : Oui |
+    |----------------|--------------|--------------|
+    | **Réel : Non** | 43,406 (TN)  | 155 (FP)     |
+    | **Réel : Oui** | 3,910 (FN)   | 55 (TP)      |
+    """)
+    st.markdown("""
+    - **Observations :**
+        - Classe 0 (Non) : Très efficace avec 43,406 prédictions correctes et 155 erreurs.
+        - Classe 1 (Oui) : Faible performance avec seulement 55 cas correctement détectés sur 3,965.
+    """)
+
+    # Rapport de classification
+    st.subheader("Rapport de Classification")
+    st.markdown("""
+    | Classe | Précision | Rappel | F1-Score | Support |
+    |--------|-----------|--------|----------|---------|
+    | 0.0    | 0.92      | 1.00   | 0.96     | 43,561  |
+    | 1.0    | 0.26      | 0.01   | 0.03     | 3,965   |
+    | **Macro Avg** | 0.59 | 0.51 | 0.49 | 47,526 |
+    | **Weighted Avg** | 0.86 | 0.91 | 0.88 | 47,526 |
+    """)
+    st.markdown("""
+    - Classe 0 (Non) : Excellente performance globale.
+    - Classe 1 (Oui) : Détection faible avec seulement 1 % de rappel.
+    - Macro Avg : Montre un déséquilibre entre les classes.
+    """)
+
+    # Scores de performance
+    st.subheader("Scores de Performance")
+    st.markdown("""
+    - **Accuracy :** 91 %, mais biaisée par la classe majoritaire.
+    - **ROC-AUC :** 0.73, indiquant une séparation modérée des classes.
+    """)
+
+    # Recommandations pour amélioration
+    st.subheader("Améliorations Recommandées")
+    st.markdown("""
+    1. **Gestion du déséquilibre des classes :**
+        - Sur-échantillonnage de la classe minoritaire.
+        - Sous-échantillonnage de la classe majoritaire.
+        - Pondération des classes.
+    2. **Explorer d'autres modèles :**
+        - Random Forest, Gradient Boosting, ou SVM.
+    3. **Métriques adaptées :**
+        - Utilisation du F1-Score et du rappel pour évaluer les performances sur la classe minoritaire.
+    """)
+
+    # Section 2 : Clustering K-Means
+    st.header("Clustering avec K-Means")
+
+    # Méthode du coude
+    st.subheader("Méthode du Coude")
+    st.image("data/images/elbow_kmeans.png", caption="Méthode du coude")
+    st.markdown("""
+    La méthode du coude montre une diminution rapide de l'inertie jusqu'à **k=10**. 
+    Pour cette analyse, un clustering avec **k=2** a été exploré pour une séparation binaire simple.
+    """)
+
+    # Résultats du clustering
+    st.subheader("Résultats du Clustering avec k=2")
+    st.image("data/images/k_means.png", caption="Visualisation des clusters (PCA)")
+    st.markdown("""
+    Les clusters générés sont distincts dans l'espace PCA, mais ils ne correspondent pas directement aux classes définies par HadSkinCancer.
+    """)
+
+    # Recommandations pour amélioration
+    st.subheader("Améliorations Recommandées")
+    st.markdown("""
+    1. **Explorer d'autres modèles de clustering :**
+        - DBSCAN pour détecter des clusters de formes variées.
+        - GMM pour capturer des relations probabilistes.
+    2. **Sélection de caractéristiques :**
+        - Intégrer des caractéristiques plus corrélées à HadSkinCancer.
+    3. **Évaluation des clusters :**
+        - Calculer le Silhouette Score pour mesurer la cohérence.
+    """)
+
+    # Section 3 : Modèle de Régression Logistique
+    st.header("Modèle de Régression Logistique")
+
+    # Résultats du modèle
+    st.subheader("Résultats du Modèle")
+    st.image("data/images/results_reglog.png", caption="Résultats de la régression logistique")
+
+    # Matrice de confusion
+    st.subheader("Matrice de Confusion")
+    st.markdown("""
+    |                | Prédit : Non | Prédit : Oui |
+    |----------------|--------------|--------------|
+    | **Réel : Non** | 43,561 (TN)  | 0 (FP)       |
+    | **Réel : Oui** | 3,965 (FN)   | 0 (TP)       |
+    """)
+    st.markdown("""
+    Le modèle échoue complètement à détecter les cas positifs.
+    """)
+
+    # Importance des caractéristiques
+    st.subheader("Importance des Caractéristiques")
+    st.image("data/images/features_importance.png", caption="Importance des caractéristiques")
+    st.markdown("""
+    Les variables les plus influentes sont :
+    - **Âge** : Plus importante.
+    - **Ethnie** : Rôle significatif.
+    - Facteurs comportementaux comme la consommation d'alcool et le tabagisme.
+    """)
+
+    # Conclusion globale
+    st.header("Conclusion Globale")
+    st.markdown("""
+    Les modèles KNN, K-Means et régression logistique montrent des limites dans la gestion des déséquilibres de classes.
+    **Propositions d'améliorations :**
+    1. Rééquilibrage des données.
+    2. Exploration de modèles plus robustes.
+    3. Utilisation de métriques adaptées (F1-Score, ROC-AUC).
+    Ces actions permettront d'améliorer les performances pour des tâches critiques comme la détection de maladies.
+    """)
 
 # Page pour faire une prédiction
 elif page == "Faire une Prédiction":
