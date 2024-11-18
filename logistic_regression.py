@@ -3,7 +3,6 @@ import numpy as np
 from matplotlib import pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from tools import preprocess_data, clean_data
@@ -28,49 +27,28 @@ X_scaled = scaler.fit_transform(X)
 X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
 
 # ===========================
-# Random Forest
-# ===========================
-rf = RandomForestClassifier(random_state=42, n_estimators=100)
-rf.fit(X_train, y_train)
-
-# Évaluation du modèle Random Forest
-y_pred_rf = rf.predict(X_test)
-print("\n=== Random Forest ===")
-print("Confusion Matrix:")
-print(confusion_matrix(y_test, y_pred_rf))
-print("\nClassification Report:")
-print(classification_report(y_test, y_pred_rf))
-
-# Importance des caractéristiques - Random Forest
-importances_rf = rf.feature_importances_
-feature_names = X.columns
-sorted_indices_rf = np.argsort(importances_rf)[::-1]
-
-plt.figure(figsize=(10, 6))
-plt.title("Importance des caractéristiques - Random Forest")
-plt.bar(range(len(feature_names)), importances_rf[sorted_indices_rf], align="center", color="blue")
-plt.xticks(range(len(feature_names)), feature_names[sorted_indices_rf], rotation=45, ha='right')
-plt.tight_layout()
-plt.show()
-
-# ===========================
 # Logistic Regression
 # ===========================
+
+# Initialisation et entraînement du modèle
 log_reg = LogisticRegression(random_state=42, max_iter=1000)
 log_reg.fit(X_train, y_train)
 
 # Évaluation du modèle Logistic Regression
 y_pred_log = log_reg.predict(X_test)
+
 print("\n=== Logistic Regression ===")
 print("Confusion Matrix:")
 print(confusion_matrix(y_test, y_pred_log))
 print("\nClassification Report:")
 print(classification_report(y_test, y_pred_log, zero_division=0))
 
-# Importance des caractéristiques - Logistic Regression
+# Importance des caractéristiques 
+feature_names = X.columns
 coef_log = log_reg.coef_[0]
 sorted_indices_log = np.argsort(np.abs(coef_log))[::-1]
 
+# Visualisation
 plt.figure(figsize=(10, 6))
 plt.title("Importance des caractéristiques - Logistic Regression")
 plt.bar(range(len(feature_names)), coef_log[sorted_indices_log], align="center", color="orange")

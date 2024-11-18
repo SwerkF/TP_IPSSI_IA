@@ -158,7 +158,7 @@ elif page == "Analyse Exploratoire des Données":
         ### **Graphique 1 : Train vs Test Accuracy and Accuracy Gap**
     """)
     image1 = Image.open("data/images/accuracy_gap_analysis.png")
-    st.image(image1, caption="Image téléchargée à analyser", use_container_width=True)
+    st.image(image1, caption="Image téléchargée à analyser")
     st.markdown("""
         - **Observation** : 
             - La précision d'entraînement augmente avec la profondeur, tandis que la précision de test se stabilise pour des profondeurs entre 5 et 10.
@@ -169,7 +169,7 @@ elif page == "Analyse Exploratoire des Données":
         ### **Graphique 2 : Visualisation du Meilleur Arbre**
     """)
     image2 = Image.open("data/images/best_decision_tree_visualization.png")
-    st.image(image2, caption="Image téléchargée à analyser", use_container_width=True)
+    st.image(image2, caption="Image téléchargée à analyser")
     st.markdown("""
         - **Observation** :
             - L’arbre montre que les premières décisions sont principalement basées sur `AgeCategory`, suivi de `EthnicityCategory`.
@@ -192,7 +192,7 @@ elif page == "Analyse Exploratoire des Données":
             ### **Graphique 3 : Importances des Caractéristiques (Profondeur Optimale)**
     """)
     image3 = Image.open("data/images/feature_importances_best_depth.png")
-    st.image(image3, caption="Image téléchargée à analyser", use_container_width=True)
+    st.image(image3, caption="Image téléchargée à analyser")
     st.markdown("""
         - **Observation** :
             - `AgeCategory` est la variable la plus influente, suivie de `EthnicityCategory`. Les autres caractéristiques, comme `BMI` et `AlcoholDrinkers`, ont un impact limité.
@@ -216,7 +216,7 @@ elif page == "Analyse Exploratoire des Données":
         ### **Graphique 4 : Importances des Caractéristiques (Profondeur = 9)**
     """)
     image4 = Image.open("data/images/feature_importances_depth_9.png")
-    st.image(image4, caption="Image téléchargée à analyser", use_container_width=True)
+    st.image(image4, caption="Image téléchargée à analyser")
     st.markdown("""
         - **Observation** :
             - Les tendances sont similaires à celles de la profondeur optimale.
@@ -228,8 +228,8 @@ elif page == "Analyse Exploratoire des Données":
     """)
     image5 = Image.open("data/images/roc_curve.png")
     image5_1 = Image.open("data/images/rf_roc_curve.png")
-    st.image(image5, caption="Image téléchargée à analyser", use_container_width=True)
-    st.image(image5_1, caption="Image téléchargée à analyser", use_container_width=True)
+    st.image(image5, caption="Image téléchargée à analyser")
+    st.image(image5_1, caption="Image téléchargée à analyser")
     st.markdown("""
         - **Observation** :
             - L'AUC pour la Forêt Aléatoire est légèrement meilleure que celle de l'Arbre de Décision.
@@ -239,7 +239,7 @@ elif page == "Analyse Exploratoire des Données":
         ### **Graphique 6 : Matrice de Corrélation**
     """)
     image6 = Image.open("data/images/correlation_matrix_with_target.png")
-    st.image(image6, caption="Image téléchargée à analyser", use_container_width=True)
+    st.image(image6, caption="Image téléchargée à analyser")
     st.markdown("""
         - **Observation** :
             - `AgeCategory` et `EthnicityCategory` montrent des corrélations significatives avec la cible `HadSkinCancer`.
@@ -250,12 +250,150 @@ elif page == "Analyse Exploratoire des Données":
     """)
 
     image7 = Image.open("data/images/decision_tree_summary_table.png")
-    st.image(image7, caption="Image téléchargée à analyser", use_container_width=True)
+    st.image(image7, caption="Image téléchargée à analyser")
     st.markdown("""
         - **Observation** :
             - Une profondeur de 5 offre une précision optimale avec un écart de précision minimal.
         - **Interprétation** :
             - Les profondeurs supérieures à 10 n'apportent pas de gains significatifs et augmentent le risque de sur-apprentissage.
+    """)
+
+    # Titre principal
+    st.title("📊 Analyse de Modèles : KNN, K-Means et Régression Logistique")
+
+    # Section 1 : Modèle KNN
+    st.header("Modèle K-Nearest Neighbors (KNN)")
+
+    # Résultats du modèle
+    st.subheader("Résultats du Modèle KNN")
+    st.image("data/images/results_knn.png", caption="Résultats du modèle KNN")
+
+    # Méthode du coude
+    st.subheader("Méthode du Coude")
+    st.image("data/images/elbow_knn.png", caption="Méthode du coude")
+    st.markdown("""
+    La méthode du coude a été utilisée pour choisir une valeur optimale pour k. 
+    Le taux d'erreur diminue rapidement jusqu'à une stabilisation autour de **k=10**, suggérant un équilibre entre complexité et performance.
+    """)
+
+    # Matrice de confusion
+    st.subheader("Matrice de Confusion")
+    st.markdown("""
+    |                | Prédit : Non | Prédit : Oui |
+    |----------------|--------------|--------------|
+    | **Réel : Non** | 43,406 (TN)  | 155 (FP)     |
+    | **Réel : Oui** | 3,910 (FN)   | 55 (TP)      |
+    """)
+    st.markdown("""
+    - **Observations :**
+        - Classe 0 (Non) : Très efficace avec 43,406 prédictions correctes et 155 erreurs.
+        - Classe 1 (Oui) : Faible performance avec seulement 55 cas correctement détectés sur 3,965.
+    """)
+
+    # Rapport de classification
+    st.subheader("Rapport de Classification")
+    st.markdown("""
+    | Classe | Précision | Rappel | F1-Score | Support |
+    |--------|-----------|--------|----------|---------|
+    | 0.0    | 0.92      | 1.00   | 0.96     | 43,561  |
+    | 1.0    | 0.26      | 0.01   | 0.03     | 3,965   |
+    | **Macro Avg** | 0.59 | 0.51 | 0.49 | 47,526 |
+    | **Weighted Avg** | 0.86 | 0.91 | 0.88 | 47,526 |
+    """)
+    st.markdown("""
+    - Classe 0 (Non) : Excellente performance globale.
+    - Classe 1 (Oui) : Détection faible avec seulement 1 % de rappel.
+    - Macro Avg : Montre un déséquilibre entre les classes.
+    """)
+
+    # Scores de performance
+    st.subheader("Scores de Performance")
+    st.markdown("""
+    - **Accuracy :** 91 %, mais biaisée par la classe majoritaire.
+    - **ROC-AUC :** 0.73, indiquant une séparation modérée des classes.
+    """)
+
+    # Recommandations pour amélioration
+    st.subheader("Améliorations Recommandées")
+    st.markdown("""
+    1. **Gestion du déséquilibre des classes :**
+        - Sur-échantillonnage de la classe minoritaire.
+        - Sous-échantillonnage de la classe majoritaire.
+        - Pondération des classes.
+    2. **Explorer d'autres modèles :**
+        - Random Forest, Gradient Boosting, ou SVM.
+    3. **Métriques adaptées :**
+        - Utilisation du F1-Score et du rappel pour évaluer les performances sur la classe minoritaire.
+    """)
+
+    # Section 2 : Clustering K-Means
+    st.header("Clustering avec K-Means")
+
+    # Méthode du coude
+    st.subheader("Méthode du Coude")
+    st.image("data/images/elbow_kmeans.png", caption="Méthode du coude")
+    st.markdown("""
+    La méthode du coude montre une diminution rapide de l'inertie jusqu'à **k=10**. 
+    Pour cette analyse, un clustering avec **k=2** a été exploré pour une séparation binaire simple.
+    """)
+
+    # Résultats du clustering
+    st.subheader("Résultats du Clustering avec k=2")
+    st.image("data/images/k_means.png", caption="Visualisation des clusters (PCA)")
+    st.markdown("""
+    Les clusters générés sont distincts dans l'espace PCA, mais ils ne correspondent pas directement aux classes définies par HadSkinCancer.
+    """)
+
+    # Recommandations pour amélioration
+    st.subheader("Améliorations Recommandées")
+    st.markdown("""
+    1. **Explorer d'autres modèles de clustering :**
+        - DBSCAN pour détecter des clusters de formes variées.
+        - GMM pour capturer des relations probabilistes.
+    2. **Sélection de caractéristiques :**
+        - Intégrer des caractéristiques plus corrélées à HadSkinCancer.
+    3. **Évaluation des clusters :**
+        - Calculer le Silhouette Score pour mesurer la cohérence.
+    """)
+
+    # Section 3 : Modèle de Régression Logistique
+    st.header("Modèle de Régression Logistique")
+
+    # Résultats du modèle
+    st.subheader("Résultats du Modèle")
+    st.image("data/images/results_reglog.png", caption="Résultats de la régression logistique")
+
+    # Matrice de confusion
+    st.subheader("Matrice de Confusion")
+    st.markdown("""
+    |                | Prédit : Non | Prédit : Oui |
+    |----------------|--------------|--------------|
+    | **Réel : Non** | 43,561 (TN)  | 0 (FP)       |
+    | **Réel : Oui** | 3,965 (FN)   | 0 (TP)       |
+    """)
+    st.markdown("""
+    Le modèle échoue complètement à détecter les cas positifs.
+    """)
+
+    # Importance des caractéristiques
+    st.subheader("Importance des Caractéristiques")
+    st.image("data/images/features_importance.png", caption="Importance des caractéristiques")
+    st.markdown("""
+    Les variables les plus influentes sont :
+    - **Âge** : Plus importante.
+    - **Ethnie** : Rôle significatif.
+    - Facteurs comportementaux comme la consommation d'alcool et le tabagisme.
+    """)
+
+    # Conclusion globale
+    st.header("Conclusion Globale")
+    st.markdown("""
+    Les modèles KNN, K-Means et régression logistique montrent des limites dans la gestion des déséquilibres de classes.
+    **Propositions d'améliorations :**
+    1. Rééquilibrage des données.
+    2. Exploration de modèles plus robustes.
+    3. Utilisation de métriques adaptées (F1-Score, ROC-AUC).
+    Ces actions permettront d'améliorer les performances pour des tâches critiques comme la détection de maladies.
     """)
 
 # Page pour faire une prédiction
@@ -318,7 +456,7 @@ elif page == "Faire une Prédiction par Image":
         # Afficher l'image téléchargée
         st.markdown("### 🖼️ Image téléchargée")
         image = Image.open(uploaded_file)
-        st.image(image, caption="Image téléchargée à analyser", use_container_width=True)
+        st.image(image, caption="Image téléchargée à analyser")
 
         # Étape 3 : Résultat de la prédiction
         st.markdown("## 📌 Étape 3 : Résultat de la prédiction")
@@ -474,7 +612,7 @@ elif page == "Benchmark des Modèles":
 
     # Ajouter une visualisation de type tableau pour comparer les performances des modèles
     benchmark_results = {
-        "Modèle": ["VGG", "ResNet", "EfficientNet", "MLP", "Sequential"],
+        "Modèle": ["VGG", "ResNet", "EfficientNet", "MLP (Moyenne)", "Sequential"],
         "Accuracy": [0.85, 0.87, 0.86, 0.78, 0.79],
         "Training Time (seconds)": [300, 350, 280, 100, 150],
         "AUC": [0.87, 0.88, 0.85, 0.76, 0.80]
@@ -509,8 +647,8 @@ elif page == "Benchmark des Modèles":
 
         if os.path.exists(accuracy_curve_path) and os.path.exists(loss_curve_path):
             st.markdown(f"#### Courbes d'Apprentissage pour le Modèle {model_name}")
-            st.image(accuracy_curve_path, caption=f"Courbe d'Accuracy - {model_name}", use_container_width=True)
-            st.image(loss_curve_path, caption=f"Courbe de Loss - {model_name}", use_container_width=True)
+            st.image(accuracy_curve_path, caption=f"Courbe d'Accuracy - {model_name}")
+            st.image(loss_curve_path, caption=f"Courbe de Loss - {model_name}")
 
     # Courbes d'apprentissage pour chaque modèle
     st.markdown("### Courbes d'Apprentissage des Modèles")
@@ -525,7 +663,16 @@ elif page == "Benchmark des Modèles":
 
     st.markdown("#### Modèles MLP")
     mlp_image = Image.open("data/images/mlp_results.png")
-    st.image(mlp_image, caption="Courbes d'Apprentissage - Modèles MLP", use_container_width=True)
+    st.image(mlp_image, caption="Courbes d'Apprentissage - Modèles MLP")
+
+    st.markdown("""
+        Ce graphique permet de représenter l'efficacité des modèles MLP en fonction du nombre de neurones dans les couches cachées et en soulignant l'accuracy, le temps d'entraînement et le temps d'évaluation.
+        Grâce à ce graphique, nous pouvons voir qu'un grand nombre de neurones dans les couches cachées n'entraîne pas nécessairement une meilleure accuracy et prends plus de temps d'entraînement. Cependant, un certains nombre de neuronnes est requis pour le bon fonctionnement du modèle.
+        Comme on peut le voir, le modèle contenant uniquement 1 neuronne dans la couche cachée est le moins performant avec une accuracy en dessous de 50%.      
+        
+        En analysant les performances des modèles, nous pouvons déterminer le modèle le plus efficace qui est celui à deux couches cachées avec 64 et 32 neurones respectivement.
+        Ce modèle a le temps d'entrainement le plus court et une accuracy similaire aux autres modèles.      
+    """)
 
     # Conclusion sur le benchmark
     st.markdown("## Conclusion")
@@ -533,4 +680,6 @@ elif page == "Benchmark des Modèles":
     Après avoir comparé les performances des différents modèles, il semble que **ResNet** soit le modèle le plus performant, avec une **accuracy** de 0.88 et un **AUC** de 0.88. Toutefois, cela a un coût en termes de temps d'entraînement, qui est relativement élevé.
 
     Pour des applications où la précision est cruciale, **ResNet** semble être le meilleur choix. Si le temps d'entraînement est une contrainte importante, alors **EfficientNet** offre un bon compromis entre performance et temps d'entraînement.
+                
+    Le pire choix reste le modèle MLP à 1 neurone.
     """)

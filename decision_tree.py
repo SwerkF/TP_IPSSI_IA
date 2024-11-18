@@ -15,7 +15,7 @@ target = 'HadSkinCancer'
 print("Data loaded successfully!")
 
 # Preprocess and clean data
-preprocessed_data, initial_data = preprocess_data(data, n_rows=None, remove_other_deseas=True)
+preprocessed_data, initial_data = preprocess_data(data, n_rows=None, remove_other_diseases=True)
 cleaned_data, label_encoders, category_mappings = clean_data(preprocessed_data, target)
 
 # Show mappings
