@@ -1,4 +1,4 @@
-Prédiction du Cancer de la Peau avec l'IA 🏥
+## **Prédiction du Cancer de la Peau avec l'IA 🏥**
 
 Ce projet a été développé pour détecter les signes précoces de cancer de la peau à partir d'une simple image de la lésion cutanée, en utilisant des modèles d'intelligence artificielle.
 
