@@ -230,6 +230,64 @@ elif page == "Analyse Exploratoire des Données":
     """)
 
 
+    # Introduction à l'analyse exploratoire
+    st.markdown("""
+    ### Analyse Exploratoire avec un Arbre de Décision
+
+    Ce projet démontre l'utilisation d'un modèle **Arbre de Décision** pour analyser un dataset lié aux maladies de la peau. 
+    L'objectif est de trouver la profondeur optimale de l'arbre et d'évaluer ses performances à l'aide de plusieurs métriques et visualisations.
+    """)
+
+    # Étapes dans le code
+    st.markdown("""
+    #### Étapes dans l'Analyse Exploratoire
+    1. **Chargement des données** :
+        - Le dataset est chargé à partir d'un fichier Excel.
+        - La colonne cible est `HadSkinCancer`, qui indique si une personne a eu un cancer de la peau.
+    2. **Prétraitement des données** :
+        - Les fonctions `preprocess_data` et `clean_data` sont utilisées pour nettoyer et encoder les variables catégoriques.
+    3. **Séparation des données** :
+        - Les données sont divisées en un ensemble d'entraînement (80%) et un ensemble de test (20%).
+    4. **Entraînement et évaluation du modèle** :
+        - Une boucle teste des modèles d'Arbre de Décision avec des profondeurs variant de 1 à 20.
+        - Pour chaque profondeur, les métriques suivantes sont calculées :
+          - Précision sur les données d'entraînement.
+          - Précision sur les données de test.
+          - Écart de précision (*Accuracy Gap*).
+          - Taille de l'arbre.
+    """)
+
+    # Affichage des graphiques
+    st.markdown("#### Résultats et Visualisations")
+
+    # Graphique 1 : Accuracy Gap Analysis
+    st.subheader("Train vs Test Accuracy and Accuracy Gap")
+    st.image("data/images/accuracy_gap_analysis.png", caption="Train vs Test Accuracy and Accuracy Gap")
+
+    # Graphique 2 : Arbre de Décision
+    st.subheader("Visualisation du Meilleur Arbre")
+    st.image("data/images/best_decision_tree_visualization.png",
+             caption="Arbre de Décision avec la Meilleure Profondeur")
+
+    # Graphique 3 : Importances des Caractéristiques (Profondeur Optimale)
+    st.subheader("Importances des Caractéristiques (Profondeur Optimale)")
+    st.image("data/images/feature_importances_best_depth.png",
+             caption="Importances des Caractéristiques pour la Meilleure Profondeur")
+
+    # Graphique 4 : Importances des Caractéristiques (Profondeur = 9)
+    st.subheader("Importances des Caractéristiques (Profondeur = 9)")
+    st.image("data/images/feature_importances_depth_9.png",
+             caption="Importances des Caractéristiques pour Profondeur = 9")
+
+    # Graphique 5 : Courbe ROC
+    st.subheader("Courbe ROC")
+    st.image("data/images/roc_curve.png", caption="Courbe ROC avec AUC")
+
+    # Tableau récapitulatif
+    st.subheader("Tableau Récapitulatif des Résultats")
+    st.image("data/images/decision_tree_summary_table.png",
+             caption="Tableau des Profondeurs, Précisions et Taille des Arbres")
+
 # Page pour faire une prédiction
 elif page == "Faire une Prédiction":
     st.title("🔍 Faire une Prédiction")

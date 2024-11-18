@@ -171,3 +171,77 @@ print(f"3. ROC Curve: {roc_curve_path}")
 print(f"4. Accuracy Gap Analysis: {accuracy_gap_path}")
 print(f"5. Feature Importances (Depth 9): {feature_importances_depth_9_path}")
 print(f"6. Decision Tree Summary Table: {summary_table_path}")
+
+
+from sklearn.ensemble import RandomForestClassifier
+
+print("\n\nStarting Random Forest model...")
+
+# Initialisation et entraînement du modèle Random Forest
+rf_clf = RandomForestClassifier(random_state=42, n_estimators=100, max_depth=best_depth)
+rf_clf.fit(X_train, y_train)
+
+# Prédictions
+y_train_rf_pred = rf_clf.predict(X_train)
+y_test_rf_pred = rf_clf.predict(X_test)
+
+# Évaluation du modèle
+train_accuracy_rf = accuracy_score(y_train, y_train_rf_pred)
+test_accuracy_rf = accuracy_score(y_test, y_test_rf_pred)
+print(f"Random Forest Train Accuracy: {train_accuracy_rf:.3f}, Test Accuracy: {test_accuracy_rf:.3f}")
+
+# Feature Importances du Random Forest
+rf_importances = rf_clf.feature_importances_
+plt.figure(figsize=(10, 6))
+plt.barh(X.columns, rf_importances, color='orange')
+plt.xlabel('Importance')
+plt.ylabel('Feature')
+plt.title('Feature Importances (Random Forest)')
+rf_feature_importances_path = os.path.join(output_dir, 'rf_feature_importances.png')
+plt.savefig(rf_feature_importances_path, format='png', dpi=300)
+plt.close()
+
+# Courbe ROC pour le Random Forest
+y_scores_rf = rf_clf.predict_proba(X_test)[:, 1]
+fpr_rf, tpr_rf, thresholds_rf = roc_curve(y_test, y_scores_rf)
+roc_auc_rf = auc(fpr_rf, tpr_rf)
+
+plt.figure(figsize=(10, 6))
+plt.plot(fpr_rf, tpr_rf, color='darkorange', lw=2, label=f'ROC curve (AUC = {roc_auc_rf:.2f})')
+plt.plot([0, 1], [0, 1], color='gray', linestyle='--', lw=2)
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('Receiver Operating Characteristic Curve (Random Forest)')
+plt.legend(loc="lower right")
+rf_roc_curve_path = os.path.join(output_dir, 'rf_roc_curve.png')
+plt.savefig(rf_roc_curve_path, format='png', dpi=300)
+plt.close()
+
+# Sauvegarde des résultats pour Random Forest
+print("\nRandom Forest visualizations saved:")
+print(f"1. Feature Importances: {rf_feature_importances_path}")
+print(f"2. ROC Curve: {rf_roc_curve_path}")
+
+
+
+# Include the target variable in the data for correlation
+X_with_target = X.copy()
+X_with_target['HadSkinCancer'] = y
+
+# Compute the correlation matrix with the target variable
+correlation_matrix = X_with_target.corr()
+
+# Visualize the correlation matrix
+plt.figure(figsize=(12, 10))
+plt.matshow(correlation_matrix, fignum=1, cmap='coolwarm')
+plt.colorbar()
+plt.title("Correlation Matrix Including HadSkinCancer", pad=20)
+plt.xticks(ticks=range(len(X_with_target.columns)), labels=X_with_target.columns, rotation=90)
+plt.yticks(ticks=range(len(X_with_target.columns)), labels=X_with_target.columns)
+
+# Save the correlation matrix
+correlation_matrix_path = os.path.join(output_dir, 'correlation_matrix_with_target.png')
+plt.savefig(correlation_matrix_path, format='png', dpi=300)
+plt.close()
+
+print(f"\nCorrelation matrix including 'HadSkinCancer' saved: {correlation_matrix_path}")
