@@ -5,7 +5,7 @@ import pandas as pd
 from sklearn.metrics import roc_curve, auc
 
 
-def preprocess_data(data, n_rows=None, remove_other_diseases = False):
+def preprocess_data(data, n_rows=None, remove_other_deseas = False):
     """
     Preprocesses the data by keeping a certain number of rows (or all) and dropping specific columns.
 
@@ -29,7 +29,7 @@ def preprocess_data(data, n_rows=None, remove_other_diseases = False):
      'HadArthritis', 'HadDiabetes', 'DeafOrHardOfHearing', 'BlindOrVisionDifficulty', 'DifficultyConcentrating', 'DifficultyWalking', 'DifficultyDressingBathing', 'DifficultyErrands']
 
     preprocessed_data = data.drop(columns=columns_to_drop)
-    if remove_other_diseases:
+    if remove_other_deseas:
         preprocessed_data = preprocessed_data.drop(columns=colums_diseases)
 
     return preprocessed_data, initial_data
