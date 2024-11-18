@@ -9,6 +9,35 @@ import torch  # Pour charger les modèles PyTorch
 import torch.nn as nn  # Pour définir et utiliser le modèle CNN PyTorch
 import numpy as np  # Pour travailler avec des matrices d'image
 import pandas as pd
+import matplotlib.pyplot as plt
+
+# Charger le modèle sélectionné
+def load_selected_model(model_path):
+    try:
+        if model_path.endswith('.keras'):
+            # Load a TensorFlow model
+            model = models.load_model(model_path)
+            return model, "tensorflow"
+        elif model_path.endswith('.pkl'):
+            # Load a scikit-learn model (pkl)
+            with open(model_path, 'rb') as file:
+                try:
+                    model = pickle.load(file)
+                except Exception:
+                    model = joblib.load(model_path)  # Load with joblib if pickle fails
+            return model, "mlp"
+        elif model_path.endswith('.pth'):
+            # Load a PyTorch model
+            model = CNNModel()
+            model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))  # Load to CPU
+            model.eval()  # Set the model to evaluation mode
+            return model, "pytorch"
+        else:
+            st.error("Unsupported model format.")
+            st.stop()
+    except Exception as e:
+        st.error(f"Error loading model: {e}")
+        st.stop()
 
 # Définir le modèle CNN pour PyTorch
 class CNNModel(nn.Module):
@@ -53,7 +82,7 @@ st.set_page_config(
 
 # Barre latérale pour la navigation entre les pages
 st.sidebar.title("Navigation")
-page = st.sidebar.selectbox("Choisissez une page", ["Accueil", "Analyse Exploratoire des Données", "Faire une Prédiction", "Benchmark des Modèles"])
+page = st.sidebar.selectbox("Choisissez une page", ["Accueil", "Analyse Exploratoire des Données", "Faire une Prédiction par Image", "Faire une Prédiction par Profil" ,"Benchmark des Modèles"])
 
 # Liste des modèles disponibles pour la prédiction (pour la page "Faire une Prédiction")
 model_dir = './saved_models'
@@ -229,68 +258,9 @@ elif page == "Analyse Exploratoire des Données":
             - Les profondeurs supérieures à 10 n'apportent pas de gains significatifs et augmentent le risque de sur-apprentissage.
     """)
 
-
-    # Introduction à l'analyse exploratoire
-    st.markdown("""
-    ### Analyse Exploratoire avec un Arbre de Décision
-
-    Ce projet démontre l'utilisation d'un modèle **Arbre de Décision** pour analyser un dataset lié aux maladies de la peau. 
-    L'objectif est de trouver la profondeur optimale de l'arbre et d'évaluer ses performances à l'aide de plusieurs métriques et visualisations.
-    """)
-
-    # Étapes dans le code
-    st.markdown("""
-    #### Étapes dans l'Analyse Exploratoire
-    1. **Chargement des données** :
-        - Le dataset est chargé à partir d'un fichier Excel.
-        - La colonne cible est `HadSkinCancer`, qui indique si une personne a eu un cancer de la peau.
-    2. **Prétraitement des données** :
-        - Les fonctions `preprocess_data` et `clean_data` sont utilisées pour nettoyer et encoder les variables catégoriques.
-    3. **Séparation des données** :
-        - Les données sont divisées en un ensemble d'entraînement (80%) et un ensemble de test (20%).
-    4. **Entraînement et évaluation du modèle** :
-        - Une boucle teste des modèles d'Arbre de Décision avec des profondeurs variant de 1 à 20.
-        - Pour chaque profondeur, les métriques suivantes sont calculées :
-          - Précision sur les données d'entraînement.
-          - Précision sur les données de test.
-          - Écart de précision (*Accuracy Gap*).
-          - Taille de l'arbre.
-    """)
-
-    # Affichage des graphiques
-    st.markdown("#### Résultats et Visualisations")
-
-    # Graphique 1 : Accuracy Gap Analysis
-    st.subheader("Train vs Test Accuracy and Accuracy Gap")
-    st.image("data/images/accuracy_gap_analysis.png", caption="Train vs Test Accuracy and Accuracy Gap")
-
-    # Graphique 2 : Arbre de Décision
-    st.subheader("Visualisation du Meilleur Arbre")
-    st.image("data/images/best_decision_tree_visualization.png",
-             caption="Arbre de Décision avec la Meilleure Profondeur")
-
-    # Graphique 3 : Importances des Caractéristiques (Profondeur Optimale)
-    st.subheader("Importances des Caractéristiques (Profondeur Optimale)")
-    st.image("data/images/feature_importances_best_depth.png",
-             caption="Importances des Caractéristiques pour la Meilleure Profondeur")
-
-    # Graphique 4 : Importances des Caractéristiques (Profondeur = 9)
-    st.subheader("Importances des Caractéristiques (Profondeur = 9)")
-    st.image("data/images/feature_importances_depth_9.png",
-             caption="Importances des Caractéristiques pour Profondeur = 9")
-
-    # Graphique 5 : Courbe ROC
-    st.subheader("Courbe ROC")
-    st.image("data/images/roc_curve.png", caption="Courbe ROC avec AUC")
-
-    # Tableau récapitulatif
-    st.subheader("Tableau Récapitulatif des Résultats")
-    st.image("data/images/decision_tree_summary_table.png",
-             caption="Tableau des Profondeurs, Précisions et Taille des Arbres")
-
 # Page pour faire une prédiction
-elif page == "Faire une Prédiction":
-    st.title("🔍 Faire une Prédiction")
+elif page == "Faire une Prédiction par Image":
+    st.title("🔍 Faire une Prédiction par Image")
 
     # Vérifier s'il y a des modèles disponibles
     if not models_available:
@@ -305,34 +275,6 @@ elif page == "Faire une Prédiction":
         models_available,
         help="Choisissez un modèle pré-entraîné pour analyser l'image.",
     )
-
-    # Charger le modèle sélectionné
-    def load_selected_model(model_path):
-        try:
-            if model_path.endswith('.keras'):
-                # Load a TensorFlow model
-                model = models.load_model(model_path)
-                return model, "tensorflow"
-            elif model_path.endswith('.pkl'):
-                # Load a scikit-learn model (pkl)
-                with open(model_path, 'rb') as file:
-                    try:
-                        model = pickle.load(file)
-                    except Exception:
-                        model = joblib.load(model_path)  # Load with joblib if pickle fails
-                return model, "mlp"
-            elif model_path.endswith('.pth'):
-                # Load a PyTorch model
-                model = CNNModel()
-                model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))  # Load to CPU
-                model.eval()  # Set the model to evaluation mode
-                return model, "pytorch"
-            else:
-                st.error("Unsupported model format.")
-                st.stop()
-        except Exception as e:
-            st.error(f"Error loading model: {e}")
-            st.stop()
 
     model_path = os.path.join(model_dir, selected_model)
     with st.spinner(f"Chargement du modèle {selected_model}..."):
@@ -359,7 +301,7 @@ elif page == "Faire une Prédiction":
             return "Malignant" if prediction[0][0] > 0.5 else "Benign"
         elif model_type == "mlp":
             # Préparer l'image pour le modèle MLP (scikit-learn)
-            img = Image.open(file).resize((50, 50))  # Redimensionner pour MLP
+            img = Image.open(file).resize((224, 224))  # Redimensionner pour MLP
             img_array = np.array(img).flatten().reshape(1, -1)  # Aplatir pour MLP
             prediction = model.predict(img_array)
             return "Malignant" if prediction[0] == 1 else "Benign"
@@ -393,6 +335,131 @@ elif page == "Faire une Prédiction":
             st.error("⚠️ Résultat : La lésion pourrait être **MALIGNE**.")
             st.markdown("### Recommandation :")
             st.write("Veuillez **consulter un professionnel de santé** pour un diagnostic plus approfondi.")
+
+elif page == "Faire une Prédiction par Profil":
+    # Interface utilisateur
+    st.title("🤖 Prédiction personnalisée par profil")
+    st.markdown("""
+    Cette page permet d'effectuer une prédiction basée sur des informations personnelles. Le modèle utilisé pour cette prédiction est un **Perceptron Multicouche (MLP)**, avec une architecture optimisée et entraînée spécifiquement pour détecter les risques de cancer de la peau.
+
+    ## Configuration du Modèle 🔧
+    - **Type** : Perceptron Multicouche (MLP)
+    - **Architecture** :
+    - Première couche : **50 neurones**
+    - Deuxième couche : **30 neurones**
+    - **500 époques maximum**
+    - Fonction d'activation : **ReLU** (Rectified Linear Unit) 
+
+    ### Objectif 🎯
+    Le modèle prédit la probabilité actuelle de risque de cancer de la peau.
+
+    ---
+
+    ## Formulaire Utilisateur 📝
+    Pour effectuer la prédiction, l'utilisateur doit fournir les informations suivantes :
+    1. **État de résidence** : Choisissez parmi une liste d'États américains (ex. Alabama, Alaska, etc.)
+    2. **Sexe** : Homme ou Femme 
+    3. **Catégorie d'âge** : Une des plages d'âge prédéfinies (ex. 18-24 ans, 25-29 ans, etc.)
+    4. **IMC (Indice de Masse Corporelle)** : Un curseur permet de définir une valeur entre **10.0** et **70.0**
+    5. **Statut de fumeur** : Indiquez si vous êtes fumeur (Oui/Non)
+    6. **Utilisation de cigarettes électroniques** : Oui ou Non
+    7. **Ethnicité** : Sélectionnez une catégorie (ex. White only, Non-Hispanic)
+
+    ---
+
+    ## Résultats de la Prédiction 📊
+    Après soumission des informations :
+    1. **Probabilités prédictives** :
+    - **Classe Positive (cancer probable)** : Affichage de la probabilité en pourcentage.
+    - **Classe Négative (cancer improbable)** : Affichage de la probabilité en pourcentage.
+    2. **Représentation graphique** :
+    - Un graphique en barres montre la distribution des probabilités entre les deux classes.
+
+    ---
+
+    ### Exemple de Résultat
+    - **Classe Positive** : 65.34% (indique un risque élevé de cancer de la peau).
+    - **Classe Négative** : 34.66% (indique un risque faible).
+
+    Un graphique est généré pour permettre une analyse visuelle rapide de la probabilité.
+
+    ---
+
+    > **Note** : Les prédictions fournies par cet outil sont uniquement à titre informatif. Pour tout doute ou risque de santé, il est fortement recommandé de consulter un professionnel de santé.
+    """)
+
+    # Création du formulaire utilisateur
+    state = st.selectbox("État", ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida", "Georgia", "Guam", "Hawaii", "Idaho", "Illinois"])
+    sex = st.selectbox("Sexe", ["Male", "Female"])
+    age_category = st.selectbox("Catégorie d'âge", ["Age 18 to 24", "Age 25 to 29", "Age 30 to 34", "Age 35 to 39", "Age 40 to 44", "Age 45 to 49", "Age 50 to 54", "Age 55 to 59", "Age 60 to 64", "Age 65 to 69", "Age 70 to 74", "Age 75 to 79", "Age 80 to older"])
+    bmi = st.slider("IMC (Indice de Masse Corporelle)", 10.0, 70.0, 25.0, step=0.1)
+    smoker_status = st.selectbox("Statut de fumeur", ["Never smoked", "Former smoker", "Current smoker - now smokes every day"])
+    e_cigarette_usage = st.selectbox("Utilisation de cigarettes électroniques", [
+        "Never used e-cigarettes in my entire life",
+        "Not at all (right now)",
+        "Use them some days"
+    ])
+    race_ethnicity = st.selectbox("Ethnicité", ["Black only, Non-Hispanic", "Hispanic", "Multiracial, Non-Hispanic", "Other race only, Non-Hispanic", "White only, Non-Hispanic"])
+    alchool_drinkers = st.selectbox("Alcool", ["Yes", "No"])
+    hiv_testing = st.selectbox("Test VIH", ["Yes", "No"])
+
+    # process data to int
+    hiv_testing = 1 if hiv_testing == "Yes" else 0
+    alchool_drinkers = 1 if alchool_drinkers == "Yes" else 0
+
+    # Lorsque l'utilisateur clique sur "Prédire"
+    if st.button("Faire une prédiction"):
+        # Fonction pour faire une prédiction
+        def predict_profil(model, features):
+            return model.predict_proba([features])[0]
+
+        model, model_type = load_selected_model("./saved_models/mlp_model.pkl")
+        if not model:
+            st.error("⚠️ Aucun modèle disponible. Veuillez ajouter des modèles dans le dossier 'saved_models' en lançant le fichier train_neuron.py.")
+            st.stop()
+
+        # Convertir les entrées en format utilisable pour le modèle
+        user_features = [
+            state, sex, age_category, bmi, smoker_status, e_cigarette_usage, race_ethnicity, alchool_drinkers, hiv_testing
+        ]
+        
+        encoder = joblib.load("./saved_models/encoders.pkl")
+        if not encoder:
+            st.error("⚠️ Aucun encoder disponible. Veuillez ajouter des encoders dans le dossier 'saved_models' en lançant le fichier train_neuron.py.")
+            st.stop()
+
+        user_features_encoded = []
+        important_columns = ['State', 'Sex', 'AgeCategory', 'BMI', 'SmokerStatus', 'ECigaretteUsage', 'RaceEthnicityCategory', 'AlcoholDrinkers', 'HIVTesting']
+        for i, col in enumerate(important_columns):
+            if col in encoder:  # Vérifie si la colonne a un encodeur
+                feature_value = user_features[i]
+                if feature_value not in encoder[col].classes_:
+                    st.error(f"⚠️ Valeur inconnue '{feature_value}' détectée pour la colonne '{col}'. Veuillez vérifier vos données.")
+                    st.stop()
+                transformed = encoder[col].transform([feature_value])
+                user_features_encoded.append(transformed[0])
+            else:
+                # Ajouter directement les valeurs numériques ou non encodées
+                user_features_encoded.append(user_features[i])
+
+        print(user_features_encoded)
+        user_features_encoded = np.array(user_features_encoded) 
+
+        # Prédiction
+        prediction = predict_profil(model, user_features_encoded)
+        
+        # Afficher les résultats
+        st.markdown("## 📊 Résultats de la Prédiction")
+        st.write(f"Classe Positive (cancer probable) : {prediction[1] * 100:.2f}%")
+        st.write(f"Classe Négative (cancer improbable) : {prediction[0] * 100:.2f}%")
+
+        # Visualisation des probabilités
+        fig, ax = plt.subplots()
+        ax.bar(["Classe Négative", "Classe Positive"], prediction, color=["green", "red"])
+        ax.set_ylabel("Probabilité")
+        ax.set_title("Probabilités Prédictives")
+        st.pyplot(fig)
+        
 
 # Page pour le benchmark des modèles
 elif page == "Benchmark des Modèles":
