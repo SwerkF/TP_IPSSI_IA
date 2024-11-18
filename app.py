@@ -274,6 +274,8 @@ elif page == "Analyse Exploratoire des Données":
     st.markdown("""
     La méthode du coude a été utilisée pour choisir une valeur optimale pour k. 
     Le taux d'erreur diminue rapidement jusqu'à une stabilisation autour de **k=10**, suggérant un équilibre entre complexité et performance.
+    **Observation :** 
+        - Une valeur de k=10 est recommandée pour obtenir un compromis entre un faible taux d'erreur et une complexité acceptable.
     """)
 
     # Matrice de confusion
@@ -285,7 +287,7 @@ elif page == "Analyse Exploratoire des Données":
     | **Réel : Oui** | 3,910 (FN)   | 55 (TP)      |
     """)
     st.markdown("""
-    - **Observations :**
+    **Observations :**
         - Classe 0 (Non) : Très efficace avec 43,406 prédictions correctes et 155 erreurs.
         - Classe 1 (Oui) : Faible performance avec seulement 55 cas correctement détectés sur 3,965.
     """)
@@ -297,33 +299,60 @@ elif page == "Analyse Exploratoire des Données":
     |--------|-----------|--------|----------|---------|
     | 0.0    | 0.92      | 1.00   | 0.96     | 43,561  |
     | 1.0    | 0.26      | 0.01   | 0.03     | 3,965   |
-    | **Macro Avg** | 0.59 | 0.51 | 0.49 | 47,526 |
+    
+    | **Macro Avg**    | 0.59 | 0.51 | 0.49 | 47,526 |
     | **Weighted Avg** | 0.86 | 0.91 | 0.88 | 47,526 |
     """)
     st.markdown("""
-    - Classe 0 (Non) : Excellente performance globale.
-    - Classe 1 (Oui) : Détection faible avec seulement 1 % de rappel.
-    - Macro Avg : Montre un déséquilibre entre les classes.
+    - Classe 0 (Non) :
+        Excellente performance globale avec un F1-Score de 0.96.
+    - Classe 1 (Oui) :
+        Précision de 26% et rappel de 1%, reflétant une faible capacité à détecter les cas positifs.
+    - Macro Avg : Le déséquilibre des performances entre les deux classes est notable.
+    - Weighted Avg : Pondéré par le déséquilibre des classes, il masque les lacunes sur la classe minoritaire.
     """)
 
     # Scores de performance
     st.subheader("Scores de Performance")
     st.markdown("""
-    - **Accuracy :** 91 %, mais biaisée par la classe majoritaire.
-    - **ROC-AUC :** 0.73, indiquant une séparation modérée des classes.
+    **Accuracy :** 91%, trompeuse en raison de la domination de la classe majoritaire (92% de "Non").
+    **ROC-AUC :** 0.73, indique une capacité modérée à séparer les classes, dépassant légèrement le seuil de hasard (0.5).
+    """)
+    
+    # Impact du Nombre de Voisins (k)
+    st.subheader("Impact du Nombre de Voisins (k)")
+    st.markdown("""
+    | k      | Accuracy | 
+    |--------|-----------|
+    | 1      | 0.86      | 
+    | 2-6    | 0.91      |    
+    | 7-14   | 0.91-0.92 |   
+    | 15-20  | 0.92      |           
+    L'accuracy reste stable autour de 91-92 %, soulignant que le déséquilibre des classes est un problème inhérent.
     """)
 
     # Recommandations pour amélioration
     st.subheader("Améliorations Recommandées")
     st.markdown("""
     1. **Gestion du déséquilibre des classes :**
-        - Sur-échantillonnage de la classe minoritaire.
-        - Sous-échantillonnage de la classe majoritaire.
-        - Pondération des classes.
+        - Sur-échantillonnage : Techniques pour augmenter artificiellement les données de la classe minoritaire.
+        - Sous-échantillonnage : Réduire les échantillons de la classe majoritaire.
+        - Pondération des Classes : Ajuster les poids pour accorder plus d'importance à la classe minoritaire.
     2. **Explorer d'autres modèles :**
-        - Random Forest, Gradient Boosting, ou SVM.
+        - Modèles robustes au déséquilibre comme Random Forest, Gradient Boosting ou SVM.
     3. **Métriques adaptées :**
-        - Utilisation du F1-Score et du rappel pour évaluer les performances sur la classe minoritaire.
+        - Se concentrer sur le F1-Score, le Rappel, et le ROC-AUC pour mieux évaluer les performances sur la classe minoritaire.
+    """)
+    
+    # Conclusion
+    st.header("Conclusion KNN")
+    st.markdown("""
+    Le modèle KNN affiche une accuracy élevée (91 %), mais échoue à détecter efficacement la classe minoritaire.
+    Pour améliorer la détection des cas critiques (classe "Oui"), il est essentiel de combiner :
+        - Rééquilibrage des données
+        - Optimisation des métriques pertinentes
+        - Exploration de modèles alternatifs
+    Ces ajustements amélioreront significativement la capacité du modèle à traiter les cas rares mais critiques, comme dans les contextes de santé ou de détection d'anomalies.
     """)
 
     # Section 2 : Clustering K-Means
@@ -333,15 +362,43 @@ elif page == "Analyse Exploratoire des Données":
     st.subheader("Méthode du Coude")
     st.image("data/images/elbow_kmeans.png", caption="Méthode du coude")
     st.markdown("""
-    La méthode du coude montre une diminution rapide de l'inertie jusqu'à **k=10**. 
-    Pour cette analyse, un clustering avec **k=2** a été exploré pour une séparation binaire simple.
+    La méthode du coude montre une diminution rapide de l'inertie jusqu'à **k=10**, suggérant que 10 clusters pourraient être optimaux.
+    Pour cette analyse, nous avons utilisé k=2 pour explorer une séparation binaire simple.
     """)
 
     # Résultats du clustering
     st.subheader("Résultats du Clustering avec k=2")
     st.image("data/images/k_means.png", caption="Visualisation des clusters (PCA)")
     st.markdown("""
-    Les clusters générés sont distincts dans l'espace PCA, mais ils ne correspondent pas directement aux classes définies par HadSkinCancer.
+    **Matrice de Dispersion des Clusters (Réduction PCA) :** 
+        - Le clustering a été visualisé à l’aide de la réduction de dimensions PCA sur 2 composantes principales.
+        - Les clusters générés sont bien distincts dans l’espace PCA, mais ils ne correspondent pas directement aux classes définies par HadSkinCancer.
+    """)
+    
+    # Dispersion des Cancer de la Peau dans le Dataset 
+    st.subheader("Dispersion des Cancer de la Peau dans le Dataset ")
+    st.image("data/images/dispersion.png", caption="Dispersion dans le Dataset")
+    st.markdown("""
+    **Lors de la visualisation des clusters en fonction de la cible HadSkinCancer :**
+    - Les individus sont répartis différemment par le clustering K-Means et la cible réelle (HadSkinCancer).
+        
+    **Observation principale :**
+        - Les clusters K-Means ne parviennent pas à capturer la distinction entre les individus ayant ou non un cancer de la peau.
+        - Cela indique que le modèle utilise des patterns différents ou des caractéristiques non liées à HadSkinCancer.
+    """)
+    
+    # Résumé des Résultats
+    st.subheader("Résumé des Résultats")
+    st.markdown("""
+    1. **Nombre Optimal de Clusters : 10 (méthode du coude)**
+
+    2. **Clustering avec k=2 :**
+        - Les clusters sont distincts mais ne reflètent pas la présence ou l'absence de cancer de la peau.
+        - Cela pourrait être dû à un bruit dans les données ou à des caractéristiques non discriminantes.
+
+    3. **Pertinence des Caractéristiques :**
+        - Les variables fournies semblent insuffisantes pour capturer la relation avec HadSkinCancer.
+        - Le clustering révèle potentiellement d'autres structures dans les données, mais celles-ci ne correspondent pas à l'objectif défini.
     """)
 
     # Recommandations pour amélioration
@@ -351,16 +408,31 @@ elif page == "Analyse Exploratoire des Données":
         - DBSCAN pour détecter des clusters de formes variées.
         - GMM pour capturer des relations probabilistes.
     2. **Sélection de caractéristiques :**
-        - Intégrer des caractéristiques plus corrélées à HadSkinCancer.
-    3. **Évaluation des clusters :**
-        - Calculer le Silhouette Score pour mesurer la cohérence.
+        - Identifier et intégrer des caractéristiques plus corrélées à la cible HadSkinCancer.
+        - Réduire le bruit dans les données par un nettoyage plus rigoureux.
+    3. **Ajustement du Nombre de Clusters :**
+        - Tester avec k=10 (nombre suggéré par la méthode du coude) pour une segmentation plus fine et voir si elle révèle des groupes plus significatifs.
+    4. **Ajout de Métriques d'Évaluation :**
+        - Calculer le silhouette score pour évaluer la cohérence des clusters.
+        - Utiliser des métriques supervisées pour mesurer la pertinence des clusters par rapport à HadSkinCancer.
+    """)
+    
+    # Conclusion
+    st.header("Conclusion K-Means")
+    st.markdown("""
+    Le clustering K-Means a permis de révéler des structures dans les données, mais ces structures ne reflètent pas la présence ou l'absence de cancer de la peau.
+    Pour améliorer la pertinence du clustering dans ce contexte, il est essentiel de :
+    - Intégrer des caractéristiques plus significatives,
+    - Explorer des algorithmes alternatifs,
+    - Ajuster le nombre de clusters.
+    Ces améliorations permettront d’obtenir une segmentation plus adaptée, particulièrement utile dans des applications critiques comme la détection de maladies.
     """)
 
     # Section 3 : Modèle de Régression Logistique
     st.header("Modèle de Régression Logistique")
 
     # Résultats du modèle
-    st.subheader("Résultats du Modèle")
+    st.subheader("Résultats du Modèle de Régression Logistique")
     st.image("data/images/results_reglog.png", caption="Résultats de la régression logistique")
 
     # Matrice de confusion
@@ -372,24 +444,90 @@ elif page == "Analyse Exploratoire des Données":
     | **Réel : Oui** | 3,965 (FN)   | 0 (TP)       |
     """)
     st.markdown("""
-    Le modèle échoue complètement à détecter les cas positifs.
+    **Observations :**
+        - Classe 0 (Non) : Le modèle est très performant pour détecter les cas "Non", avec toutes les prédictions "Non" correctement classées (43,561).
+        - Classe 1 (Oui) : Aucune prédiction correcte pour la classe "Oui", avec toutes les instances "Oui" classées comme "Non" (0 TP).
+    Le modèle souffre d'un biais important vers la classe majoritaire et ne détecte pas du tout les cas "Oui".
+    """)
+    
+    # Rapport de classification
+    st.subheader("Rapport de Classification")
+    st.markdown("""
+    | Classe | Précision | Rappel | F1-Score | Support |
+    |--------|-----------|--------|----------|---------|
+    | 0.0    | 0.92      | 1.00   | 0.96     | 43,561  |
+    | 1.0    | 0.00      | 0.00   | 0.00     | 3,965   |
+    
+    | **Macro Avg**    | 0.46 | 0.50 | 0.48 | 47,526 |
+    | **Weighted Avg** | 0.84 | 0.92 | 0.88 | 47,526 |
+    """)
+    st.markdown("""
+    ** Observations :**
+        - Classe 0 (Non) :
+            Excellente performance pour cette classe avec un F1-Score de 0.96.
+        - Classe 1 (Oui) :
+            Le modèle échoue complètement à détecter les cas "Oui", avec un F1-Score de 0.0.
+        - Macro Avg : La moyenne non pondérée indique de faibles performances globales, avec un F1-Score de 0.48.
+        - Weighted Avg : Le F1-Score élevé de 0.88 est dû à la prédominance de la classe 0, masquant ainsi la mauvaise performance pour la classe 1.
+    """)
+    
+    # Scores de performance
+    st.subheader("Scores de Performance")
+    st.markdown("""
+    **Accuracy :** 92 %, le modèle est principalement performant pour la classe majoritaire, mais cette métrique est trompeuse en raison du déséquilibre des classes.
     """)
 
     # Importance des caractéristiques
     st.subheader("Importance des Caractéristiques")
     st.image("data/images/features_importance.png", caption="Importance des caractéristiques")
     st.markdown("""
-    Les variables les plus influentes sont :
-    - **Âge** : Plus importante.
-    - **Ethnie** : Rôle significatif.
-    - Facteurs comportementaux comme la consommation d'alcool et le tabagisme.
+    Pour mieux comprendre le fonctionnement du modèle, l'importance des caractéristiques a été calculée en fonction des coefficients du modèle. 
+    Les caractéristiques les plus influentes sont :
+    - **Âge :** La variable la plus importante pour prédire les résultats.
+    - **Ethnie :** Joue un rôle significatif dans les prédictions.
+    - **Facteurs secondaires :**
+        - Consommation d'alcool
+        - Tabagisme
+        - Statut VIH (positif/négatif)
+    Ces résultats soulignent l'importance de variables démographiques (âge, ethnie) et comportementales dans la prédiction, même si la performance globale est limitée par le déséquilibre des classes.
+    """)
+    
+    # Impact du Déséquilibre des Classes
+    st.subheader("Impact du Déséquilibre des Classes")
+    st.markdown("""
+    Le modèle de régression logistique affiche une accuracy élevée de 92 %, mais cette performance est totalement biaisée par la classe majoritaire (0.0). 
+    Le modèle n'a pas réussi à identifier un seul cas de la classe minoritaire (1.0), ce qui montre son incapacité à gérer un déséquilibre marqué entre les classes.
+    """)
+    
+    # Recommandations pour amélioration
+    st.subheader("Améliorations Recommandées")
+    st.markdown("""
+    1. **Gestion du Déséquilibre des Classes :**
+        - Sur-échantillonnage : Augmenter artificiellement les données de la classe minoritaire (par exemple avec SMOTE).
+        - Sous-échantillonnage : Réduire les données de la classe majoritaire pour équilibrer les proportions.
+        - Pondération des Classes : Ajuster les poids des classes dans le modèle pour donner plus d'importance à la classe minoritaire.
+    2. **Exploration d'Autres Algorithmes :** 
+        - Tester des modèles plus robustes face au déséquilibre des classes, tels que Random Forest, Gradient Boosting, ou SVM.
+    3. **Utilisation de Métriques Adaptées :**
+        - Se concentrer sur des métriques comme le F1-Score, le Rappel et **l'AUC-ROC pour évaluer les performances, surtout sur la classe minoritaire.
+    """)
+    
+    # Conclusion
+    st.header("Conclusion Régression Logistique")
+    st.markdown("""
+    Bien que le modèle de régression logistique atteigne une accuracy élevée de 92 %, il est complètement inefficace pour détecter la classe minoritaire (1.0). 
+    Ce modèle est fortement biaisé par le déséquilibre des classes, et il est essentiel de :
+    - Appliquer des techniques pour traiter ce déséquilibre (rééchantillonnage, pondération des classes),
+    - Choisir des métriques adaptées à la classe minoritaire,
+    - Explorer des modèles plus robustes aux déséquilibres comme Random Forest ou Gradient Boosting.
+    Cela permettra d’améliorer les performances du modèle, en particulier pour des tâches critiques comme la détection de maladies ou la classification d’anomalies.
     """)
 
     # Conclusion globale
     st.header("Conclusion Globale")
     st.markdown("""
     Les modèles KNN, K-Means et régression logistique montrent des limites dans la gestion des déséquilibres de classes.
-    **Propositions d'améliorations :**
+    **Ces analyses mettent en évidence des pistes claires d'amélioration :**
     1. Rééquilibrage des données.
     2. Exploration de modèles plus robustes.
     3. Utilisation de métriques adaptées (F1-Score, ROC-AUC).
