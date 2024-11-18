@@ -1,6 +1,10 @@
-﻿# Projet de prédiction d'une maladie de la peau à partir d'images
+Prédiction du Cancer de la Peau avec l'IA 🏥
 
-Ce projet démontre l'utilisation d'un modèle **Arbre de Décision** et **Forêt Aléatoire** pour analyser un dataset lié aux maladies de la peau. L'objectif est d'identifier les variables les plus importantes et de trouver des modèles efficaces pour prédire si une personne a eu un cancer de la peau (`HadSkinCancer`).
+Ce projet a été développé pour détecter les signes précoces de cancer de la peau à partir d'une simple image de la lésion cutanée, en utilisant des modèles d'intelligence artificielle.
+
+L'application permet d'explorer les données, de visualiser le processus de prédiction et de comparer les performances de plusieurs modèles de machine learning (VGG16, ResNet50, EfficientNet, et d'autres). L'objectif est à la fois d'améliorer la sensibilisation au risque de cancer de la peau et d'offrir un outil simple et efficace pour les développeurs et chercheurs.
+
+En utilisant des techniques de deep learning et transfer learning, ce projet offre un point de départ pour comprendre et déployer des solutions basées sur l'IA dans le domaine de la santé.
 
 ## **Installation**
 
