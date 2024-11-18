@@ -86,7 +86,7 @@ page = st.sidebar.selectbox("Choisissez une page", ["Accueil", "Analyse Explorat
 
 # Liste des modèles disponibles pour la prédiction (pour la page "Faire une Prédiction")
 model_dir = './saved_models'
-models_available = [f for f in os.listdir(model_dir) if f.endswith(('.keras', '.pkl', '.pth'))]
+models_available = [f for f in os.listdir(model_dir) if f.endswith(('.keras', '.pkl', '.pth')) and not f.startswith(('encoders', 'mlp_model', 'scaler'))]
 
 # Page d'accueil
 if page == "Accueil":
