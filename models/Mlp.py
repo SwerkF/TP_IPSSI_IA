@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 import random
 import joblib
 
+# TODO différentes couches, nb epochs, learning rate, etc
+
 def create_mlp_model():
     return MLPClassifier(hidden_layer_sizes=(256, 128, 64), max_iter=100, alpha=1e-4,
                     solver='sgd', verbose=10, random_state=1,

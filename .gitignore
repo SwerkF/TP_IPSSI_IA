@@ -1,5 +1,7 @@
-./data/images
-/data/images
+./data/images/train
+/data/images/train
+./data/images/test
+/data/images/test
 venv
 
 ./saved_models
