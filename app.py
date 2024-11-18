@@ -287,11 +287,9 @@ elif page == "Analyse Exploratoire des Données":
     st.subheader("Tableau Récapitulatif des Résultats")
     st.image("data/images/decision_tree_summary_table.png",
              caption="Tableau des Profondeurs, Précisions et Taille des Arbres")
-    
-    st.title("📊 Analyse et Visualisation avec KNN, Régression Logistique et K-Means")
 
     # Titre principal
-    st.title("Analyse de Modèles : KNN, K-Means et Régression Logistique")
+    st.title("📊 Analyse de Modèles : KNN, K-Means et Régression Logistique")
 
     # Section 1 : Modèle KNN
     st.header("Modèle K-Nearest Neighbors (KNN)")
