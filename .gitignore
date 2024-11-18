@@ -2,6 +2,9 @@
 /data/images
 venv
 
+./saved_models
+/saved_models
+
 # Ignorer les dossiers __pycache__
 __pycache__/
 
