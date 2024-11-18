@@ -272,9 +272,9 @@ elif page == "Analyse Exploratoire des Données":
     st.subheader("Méthode du Coude")
     st.image("data/images/elbow_knn.png", caption="Méthode du coude")
     st.markdown("""
-    La méthode du coude a été utilisée pour choisir une valeur optimale pour k. 
-    Le taux d'erreur diminue rapidement jusqu'à une stabilisation autour de **k=10**, suggérant un équilibre entre complexité et performance.
-    **Observation :** 
+    La méthode du coude a été utilisée pour choisir une valeur optimale pour k.  
+    Le taux d'erreur diminue rapidement jusqu'à une stabilisation autour de **k=10**, suggérant un équilibre entre complexité et performance.  
+    **Observation :**  
         - Une valeur de k=10 est recommandée pour obtenir un compromis entre un faible taux d'erreur et une complexité acceptable.
     """)
 
@@ -287,8 +287,8 @@ elif page == "Analyse Exploratoire des Données":
     | **Réel : Oui** | 3,910 (FN)   | 55 (TP)      |
     """)
     st.markdown("""
-    **Observations :**
-        - Classe 0 (Non) : Très efficace avec 43,406 prédictions correctes et 155 erreurs.
+    **Observations :**  
+        - Classe 0 (Non) : Très efficace avec 43,406 prédictions correctes et 155 erreurs.  
         - Classe 1 (Oui) : Faible performance avec seulement 55 cas correctement détectés sur 3,965.
     """)
 
@@ -299,8 +299,7 @@ elif page == "Analyse Exploratoire des Données":
     |--------|-----------|--------|----------|---------|
     | 0.0    | 0.92      | 1.00   | 0.96     | 43,561  |
     | 1.0    | 0.26      | 0.01   | 0.03     | 3,965   |
-    
-    | **Macro Avg**    | 0.59 | 0.51 | 0.49 | 47,526 |
+    | **Macro Avg** | 0.59 | 0.51 | 0.49 | 47,526 |
     | **Weighted Avg** | 0.86 | 0.91 | 0.88 | 47,526 |
     """)
     st.markdown("""
@@ -315,7 +314,7 @@ elif page == "Analyse Exploratoire des Données":
     # Scores de performance
     st.subheader("Scores de Performance")
     st.markdown("""
-    **Accuracy :** 91%, trompeuse en raison de la domination de la classe majoritaire (92% de "Non").
+    **Accuracy :** 91%, trompeuse en raison de la domination de la classe majoritaire (92% de "Non").  
     **ROC-AUC :** 0.73, indique une capacité modérée à séparer les classes, dépassant légèrement le seuil de hasard (0.5).
     """)
     
@@ -328,6 +327,7 @@ elif page == "Analyse Exploratoire des Données":
     | 2-6    | 0.91      |    
     | 7-14   | 0.91-0.92 |   
     | 15-20  | 0.92      |           
+    
     L'accuracy reste stable autour de 91-92 %, soulignant que le déséquilibre des classes est un problème inhérent.
     """)
 
@@ -347,11 +347,11 @@ elif page == "Analyse Exploratoire des Données":
     # Conclusion
     st.header("Conclusion KNN")
     st.markdown("""
-    Le modèle KNN affiche une accuracy élevée (91 %), mais échoue à détecter efficacement la classe minoritaire.
-    Pour améliorer la détection des cas critiques (classe "Oui"), il est essentiel de combiner :
-        - Rééquilibrage des données
-        - Optimisation des métriques pertinentes
-        - Exploration de modèles alternatifs
+    Le modèle KNN affiche une accuracy élevée (91 %), mais échoue à détecter efficacement la classe minoritaire.  
+    Pour améliorer la détection des cas critiques (classe "Oui"), il est essentiel de combiner :  
+        - Rééquilibrage des données  
+        - Optimisation des métriques pertinentes  
+        - Exploration de modèles alternatifs  
     Ces ajustements amélioreront significativement la capacité du modèle à traiter les cas rares mais critiques, comme dans les contextes de santé ou de détection d'anomalies.
     """)
 
@@ -362,7 +362,7 @@ elif page == "Analyse Exploratoire des Données":
     st.subheader("Méthode du Coude")
     st.image("data/images/elbow_kmeans.png", caption="Méthode du coude")
     st.markdown("""
-    La méthode du coude montre une diminution rapide de l'inertie jusqu'à **k=10**, suggérant que 10 clusters pourraient être optimaux.
+    La méthode du coude montre une diminution rapide de l'inertie jusqu'à **k=10**, suggérant que 10 clusters pourraient être optimaux.  
     Pour cette analyse, nous avons utilisé k=2 pour explorer une séparation binaire simple.
     """)
 
@@ -370,21 +370,21 @@ elif page == "Analyse Exploratoire des Données":
     st.subheader("Résultats du Clustering avec k=2")
     st.image("data/images/k_means.png", caption="Visualisation des clusters (PCA)")
     st.markdown("""
-    **Matrice de Dispersion des Clusters (Réduction PCA) :** 
-        - Le clustering a été visualisé à l’aide de la réduction de dimensions PCA sur 2 composantes principales.
-        - Les clusters générés sont bien distincts dans l’espace PCA, mais ils ne correspondent pas directement aux classes définies par HadSkinCancer.
+    **Matrice de Dispersion des Clusters (Réduction PCA) :**  
+        - Le clustering a été visualisé à l’aide de la réduction de dimensions PCA sur 2 composantes principales.  
+        - Les clusters générés sont bien distincts dans l’espace PCA, mais ils ne correspondent pas directement aux classes définies par HadSkinCancer.  
     """)
     
     # Dispersion des Cancer de la Peau dans le Dataset 
     st.subheader("Dispersion des Cancer de la Peau dans le Dataset ")
     st.image("data/images/dispersion.png", caption="Dispersion dans le Dataset")
     st.markdown("""
-    **Lors de la visualisation des clusters en fonction de la cible HadSkinCancer :**
+    **Lors de la visualisation des clusters en fonction de la cible HadSkinCancer :**  
     - Les individus sont répartis différemment par le clustering K-Means et la cible réelle (HadSkinCancer).
         
-    **Observation principale :**
-        - Les clusters K-Means ne parviennent pas à capturer la distinction entre les individus ayant ou non un cancer de la peau.
-        - Cela indique que le modèle utilise des patterns différents ou des caractéristiques non liées à HadSkinCancer.
+    **Observation :**  
+        - Les clusters K-Means ne parviennent pas à capturer la distinction entre les individus ayant ou non un cancer de la peau.  
+        - Cela indique que le modèle utilise des patterns différents ou des caractéristiques non liées à HadSkinCancer.  
     """)
     
     # Résumé des Résultats
@@ -421,10 +421,11 @@ elif page == "Analyse Exploratoire des Données":
     st.header("Conclusion K-Means")
     st.markdown("""
     Le clustering K-Means a permis de révéler des structures dans les données, mais ces structures ne reflètent pas la présence ou l'absence de cancer de la peau.
-    Pour améliorer la pertinence du clustering dans ce contexte, il est essentiel de :
-    - Intégrer des caractéristiques plus significatives,
-    - Explorer des algorithmes alternatifs,
-    - Ajuster le nombre de clusters.
+    Pour améliorer la pertinence du clustering dans ce contexte, il est essentiel :
+    - d'Intégrer des caractéristiques plus significatives,
+    - d'Explorer des algorithmes alternatifs,
+    - d'Ajuster le nombre de clusters.  
+    
     Ces améliorations permettront d’obtenir une segmentation plus adaptée, particulièrement utile dans des applications critiques comme la détection de maladies.
     """)
 
@@ -444,10 +445,10 @@ elif page == "Analyse Exploratoire des Données":
     | **Réel : Oui** | 3,965 (FN)   | 0 (TP)       |
     """)
     st.markdown("""
-    **Observations :**
-        - Classe 0 (Non) : Le modèle est très performant pour détecter les cas "Non", avec toutes les prédictions "Non" correctement classées (43,561).
-        - Classe 1 (Oui) : Aucune prédiction correcte pour la classe "Oui", avec toutes les instances "Oui" classées comme "Non" (0 TP).
-    Le modèle souffre d'un biais important vers la classe majoritaire et ne détecte pas du tout les cas "Oui".
+    **Observations :**  
+        - Classe 0 (Non) : Le modèle est très performant pour détecter les cas "Non", avec toutes les prédictions "Non" correctement classées (43,561).  
+        - Classe 1 (Oui) : Aucune prédiction correcte pour la classe "Oui", avec toutes les instances "Oui" classées comme "Non" (0 TP).  
+    Le modèle souffre d'un biais important vers la classe majoritaire et ne détecte pas du tout les cas "Oui".  
     """)
     
     # Rapport de classification
@@ -495,7 +496,7 @@ elif page == "Analyse Exploratoire des Données":
     # Impact du Déséquilibre des Classes
     st.subheader("Impact du Déséquilibre des Classes")
     st.markdown("""
-    Le modèle de régression logistique affiche une accuracy élevée de 92 %, mais cette performance est totalement biaisée par la classe majoritaire (0.0). 
+    Le modèle de régression logistique affiche une accuracy élevée de 92 %, mais cette performance est totalement biaisée par la classe majoritaire (0.0).  
     Le modèle n'a pas réussi à identifier un seul cas de la classe minoritaire (1.0), ce qui montre son incapacité à gérer un déséquilibre marqué entre les classes.
     """)
     
