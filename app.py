@@ -265,4 +265,3 @@ elif page == "Benchmark des Modèles":
 
     Pour des applications où la précision est cruciale, **ResNet** semble être le meilleur choix. Si le temps d'entraînement est une contrainte importante, alors **EfficientNet** offre un bon compromis entre performance et temps d'entraînement.
     """)
-
