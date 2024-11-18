@@ -458,17 +458,14 @@ elif page == "Analyse Exploratoire des Données":
     |--------|-----------|--------|----------|---------|
     | 0.0    | 0.92      | 1.00   | 0.96     | 43,561  |
     | 1.0    | 0.00      | 0.00   | 0.00     | 3,965   |
-    
     | **Macro Avg**    | 0.46 | 0.50 | 0.48 | 47,526 |
     | **Weighted Avg** | 0.84 | 0.92 | 0.88 | 47,526 |
     """)
     st.markdown("""
-    ** Observations :**
-        - Classe 0 (Non) :
-            Excellente performance pour cette classe avec un F1-Score de 0.96.
-        - Classe 1 (Oui) :
-            Le modèle échoue complètement à détecter les cas "Oui", avec un F1-Score de 0.0.
-        - Macro Avg : La moyenne non pondérée indique de faibles performances globales, avec un F1-Score de 0.48.
+    ** Observations :**  
+        - Classe 0 (Non) : Excellente performance pour cette classe avec un F1-Score de 0.96.  
+        - Classe 1 (Oui) : Le modèle échoue complètement à détecter les cas "Oui", avec un F1-Score de 0.0.  
+        - Macro Avg : La moyenne non pondérée indique de faibles performances globales, avec un F1-Score de 0.48.  
         - Weighted Avg : Le F1-Score élevé de 0.88 est dû à la prédominance de la classe 0, masquant ainsi la mauvaise performance pour la classe 1.
     """)
     
