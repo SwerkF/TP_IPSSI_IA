@@ -462,7 +462,7 @@ elif page == "Analyse Exploratoire des Données":
     | **Weighted Avg** | 0.84 | 0.92 | 0.88 | 47,526 |
     """)
     st.markdown("""
-    ** Observations :**  
+    **Observations :**  
         - Classe 0 (Non) : Excellente performance pour cette classe avec un F1-Score de 0.96.  
         - Classe 1 (Oui) : Le modèle échoue complètement à détecter les cas "Oui", avec un F1-Score de 0.0.  
         - Macro Avg : La moyenne non pondérée indique de faibles performances globales, avec un F1-Score de 0.48.  
